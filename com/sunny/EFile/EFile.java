@@ -21,7 +21,7 @@ import com.google.appinventor.components.runtime.Component;
 import com.google.appinventor.components.runtime.util.MediaUtil;
 import com.google.appinventor.components.runtime.EventDispatcher;
 import com.google.appinventor.components.runtime.PermissionResultHandler;
-@DesignerComponent(version = 3,
+@DesignerComponent(version = 2,
                    description ="A customized version of File component<br>Developed by Sunny Gupta",
                    category = ComponentCategory.EXTENSION,
                    nonVisible = true,
