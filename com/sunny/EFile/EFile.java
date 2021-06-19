@@ -49,7 +49,7 @@ public final class EFile extends AndroidNonvisibleComponent{
 
     @SimpleFunction(description="Returns external storage path")
     public String GetExternalStoragePath(){
-        return QUtil.getExternalStoragePath(context);
+        return getExternalStoragePath();
     }
     @SimpleFunction(description="Returns app's private storage directory path")
     public String GetPrivateDirPath(){
@@ -92,7 +92,11 @@ public final class EFile extends AndroidNonvisibleComponent{
                     completeFileName = sd + fileName;
                 }
             } else {
-                completeFileName = sd + File.separator + fileName;
+                if (legacy) {
+                    completeFileName = GetApplicationSpecificDirPath() + File.separator + fileName;
+                }else{
+                    completeFileName = GetPrivateDirPath() + File.separator + fileName;
+                }
             }
             return completeFileName;
         }
@@ -102,11 +106,10 @@ public final class EFile extends AndroidNonvisibleComponent{
             context.getExternalFilesDir(null).mkdirs();
         }
         if(filename.startsWith("/")) {
-            if (filename.contains(context.getApplicationContext().getPackageName())) {
-                final String file = getAbsoluteFilePath(filename);
+                if (filename.contains(GetApplicationSpecificDirPath()) || filename.contains(GetPrivateDirPath()) || filename.contains(GetCacheDirPath())) {
                 AsynchUtil.runAsynchronously(new Runnable() {
                     public void run() {
-                        save(file,text,append);
+                        save(filename,text,append);
                     }
                 });
             }else{
@@ -133,15 +136,9 @@ public final class EFile extends AndroidNonvisibleComponent{
                 }
             }
         }else{
-            final String[] arr = new String[1];
-            if (legacy){
-                arr[0] = context.getExternalFilesDir(null).getPath() + "/" + filename;
-            }else{
-                arr[0] = filename;
-            }
             AsynchUtil.runAsynchronously(new Runnable() {
                 public void run() {
-                    save(arr[0],text,append);
+                    save(getAbsoluteFilePath(filename),text,append);
                 }
             });
         }
@@ -198,13 +195,12 @@ public final class EFile extends AndroidNonvisibleComponent{
                 });
             }else if(fileName.startsWith("/")){
                 if (fileName.contains(GetApplicationSpecificDirPath()) || fileName.contains(GetPrivateDirPath()) || fileName.contains(GetCacheDirPath())) {
-                    final String filename = getAbsoluteFilePath(fileName);
-                    inputStream = new FileInputStream(filename);
+                    inputStream = new FileInputStream(fileName);
                     final InputStream asyncInputStream = inputStream;
                     AsynchUtil.runAsynchronously(new Runnable() {
                         @Override
                         public void run() {
-                            AsyncRead(asyncInputStream, filename);
+                            AsyncRead(asyncInputStream, fileName);
                         }
                     });
                 }else{
@@ -223,8 +219,7 @@ public final class EFile extends AndroidNonvisibleComponent{
                         });
                     }
                     if (hasReadAccess) {
-                        inputStream = FileUtil.openFile(getAbsoluteFilePath(fileName));
-                        final InputStream asyncInputStream = inputStream;
+                        final InputStream asyncInputStream = FileUtil.openFile(getAbsoluteFilePath(fileName));
                         AsynchUtil.runAsynchronously(new Runnable() {
                             @Override
                             public void run() {
@@ -234,7 +229,7 @@ public final class EFile extends AndroidNonvisibleComponent{
                     }
                 }
             }else{
-                final String filename = context.getExternalFilesDir(null).getPath() + "/" + fileName;
+                final String filename = getAbsoluteFilePath(fileName);
                 inputStream = new FileInputStream(filename);
                 final InputStream asyncInputStream = inputStream;
                 AsynchUtil.runAsynchronously(new Runnable() {
