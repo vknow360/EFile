@@ -15,7 +15,7 @@ import com.google.appinventor.components.runtime.AndroidNonvisibleComponent;
 import com.google.appinventor.components.runtime.ComponentContainer;
 import com.google.appinventor.components.runtime.EventDispatcher;
 import com.google.appinventor.components.runtime.PermissionResultHandler;
-@DesignerComponent(version = 3,
+@DesignerComponent(version = 4,
         description ="A customized version of File component<br>Developed by Sunny Gupta",
         category = ComponentCategory.EXTENSION,
         nonVisible = true,
